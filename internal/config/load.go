@@ -38,9 +38,15 @@ func Load(v *viper.Viper, fs *pflag.FlagSet, file string) (*Config, error) {
 func RegisterFlags() *pflag.FlagSet {
 	fs := pflag.NewFlagSet("omni", pflag.ContinueOnError)
 
+	// Log settings
 	fs.String("log.level", "info", "Set log level (debug, info, warn, error)")
 	fs.String("log.format", "json", "Set log format (json, console)")
 	fs.Bool("log.dev", false, "Enable development logging")
+
+	// Server settings
+	fs.String("server.host", "0.0.0.0", "Server host address")
+	fs.Int("server.port", 6767, "Server cleartext port")
+	fs.Int("server.secure-port", 4567, "Server secure port")
 
 	return fs
 }

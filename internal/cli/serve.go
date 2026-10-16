@@ -16,12 +16,17 @@ func serveCmd(a *appConfig) *cobra.Command {
 				return err
 			}
 
-			app, err := app.Bootstrap(cfg)
-			app.Log.Info("Omni starting...")
+			omni, err := app.Bootstrap(cfg)
+			if err != nil {
+				return err
+			}
+			defer omni.Close()
+
+			omni.Log.Info("Omni starting...")
 
 			<-cmd.Context().Done()
 
-			app.Log.Info("Shutting down")
+			omni.Log.Info("Shutting down")
 
 			return nil
 		},

@@ -14,15 +14,20 @@ type App struct {
 
 func Bootstrap(cfg *config.Config) (*App, error) {
 	// Create logger instance
-	logger, err := logger.New(&cfg.Log)
+	log, err := logger.New(&cfg.Log)
 	if err != nil {
 		return nil, fmt.Errorf("starting logger: %w", err)
 	}
-	defer logger.Sync()
-	zap.ReplaceGlobals(logger)
-	zap.RedirectStdLog(logger)
+	zap.ReplaceGlobals(log)
+	zap.RedirectStdLog(log)
 
 	return &App{
-		Log: logger,
+		Log: log,
 	}, nil
+}
+
+// Close flushes buffered log entries. Call it once at shutdown.
+func (a *App) Close() {
+	// Sync commonly fails on stderr/stdout (e.g. "inappropriate ioctl"); not actionable.
+	_ = a.Log.Sync()
 }
