@@ -4,12 +4,35 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
-func Load() {
+func Load(v *viper.Viper, fs *pflag.FlagSet, file string) (*Config, error) {
+	// Bind pflags from viper instance
+	if err := v.BindPFlags(fs); err != nil {
+		return nil, fmt.Errorf("bindng flags: %w", err)
+	}
+
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	v.SetEnvPrefix("omni")
+
+	v.AutomaticEnv()
+
+	// TODO: read in config file
+
+	var cfg Config
+	if err := v.Unmarshal(&cfg); err != nil {
+		return nil, fmt.Errorf("unmarshalling config: %w", err)
+	}
+
+	// TODO: Normalize relevant values
+
+	// TODO: Implement validation for all values
+
+	return &cfg, nil
 }
 
 func RegisterFlags() *pflag.FlagSet {

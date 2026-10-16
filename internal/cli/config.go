@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func configCmd(a *app) *cobra.Command {
+func configCmd(a *appConfig) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "config",
 		Short: "Manage omni configuration",
@@ -22,9 +22,10 @@ func configGenerateCmd() *cobra.Command {
 	var force bool
 
 	cmd := &cobra.Command{
-		Use:   "generate",
-		Short: "Generate a config file with the default values",
-		Args:  cobra.MaximumNArgs(1),
+		Use:     "generate",
+		Short:   "Generate a config file with the default values",
+		Args:    cobra.MaximumNArgs(1),
+		Aliases: []string{"gen"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var path string
 

@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type app struct {
+type appConfig struct {
 	v        *viper.Viper
 	cfgFlags *pflag.FlagSet
 }
@@ -19,10 +19,11 @@ func Execute(ctx context.Context) error {
 }
 
 func rootCmd() *cobra.Command {
-	a := &app{
+	a := &appConfig{
 		v:        viper.New(),
 		cfgFlags: config.RegisterFlags(),
 	}
+
 	root := &cobra.Command{
 		Use:          "omni",
 		Short:        "Root command for the app",
@@ -31,7 +32,14 @@ func rootCmd() *cobra.Command {
 
 	root.PersistentFlags().AddFlagSet(a.cfgFlags)
 
-	root.AddCommand(configCmd(a))
+	root.AddCommand(
+		configCmd(a),
+		serveCmd(a),
+	)
 
 	return root
+}
+
+func (a *appConfig) loadConfig() (*config.Config, error) {
+	return config.Load(a.v, a.cfgFlags, "")
 }
